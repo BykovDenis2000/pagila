@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.util.Date;
+
 @Service
 public class CustomerService  {
     private final CustomerRepository customerRepository;
@@ -31,6 +33,7 @@ public class CustomerService  {
         Customer customer = customerRepository.getById(customer_id);
         Film film = inventoryRepository.getById(film_id);
         Rental rental = new Rental(customer,film);
+        rental.setReturn_date(null);
         rentalRepository.save(rental);
 
         JSONObject filmJSON = new JSONObject();
@@ -70,7 +73,7 @@ public class CustomerService  {
         {
             if(r.getCustomer_id().equals(customer_id) && r.getInventory_id().equals(film_id))
             {
-                rentalRepository.delete(r);
+                r.setReturn_date(new Date());
                 filmJSON.put("inventory_id", r.getInventory_id());
                 filmJSON.put("customer_id", r.getCustomer_id());
                 filmJSON.put("rental_date", r.getRental_date());
@@ -80,7 +83,4 @@ public class CustomerService  {
         }
         return  films;
     }
-
-
-
 }
